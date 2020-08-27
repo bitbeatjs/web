@@ -6,6 +6,7 @@ import {
     Result,
     ConnectionMiddleware,
     boot,
+    Boot,
 } from '@bitbeat/core';
 import fastify, { FastifyInstance } from 'fastify';
 import fastifyCORS from 'fastify-cors';
@@ -35,10 +36,8 @@ export default class WebServer extends Server {
         this.debug = debug(`${boot.name}:${this.name}`);
         debug.disable();
 
-        if (
-            process.env.BITBEAT_DEBUG?.toLowerCase() === 'true' ||
-            process.env.BITBEAT_DEBUG === '1'
-        ) {
+        if (Boot.getEnvVar('BITBEAT_DEBUG', true)) {
+            console.log(boot.name)
             debug.enable(`${boot.name}:*`);
         }
     }
