@@ -6,13 +6,10 @@
 *.config.js
 *.config.yml
 !bitbeat.*.js
-*.bpmn
-*.png
-tsconfig.json
-typedoc.json
 docs
 .dockerignore
-docker/core/Dockerfile
+docker/**/Dockerfile
 .idea
-.eslintignore
-.eslintrc.js
+__tests__
+bin/zip.sh
+gulpfile.js
