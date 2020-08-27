@@ -1,5 +1,6 @@
 {
   "name": "@bitbeat/web",
+  "description": "The web server module for bitbeat.",
   "version": "0.0.1",
   "main": "index.js",
   "author": "Oliver Freudrich <info@oliverfreudrich.com> (https://oliverfreudrich.com)",
