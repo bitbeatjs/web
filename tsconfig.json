@@ -1,0 +1,14 @@
+{
+  "extends": "./node_modules/@bitbeat/core/tsconfig.json",
+  "files": [
+    "index.ts"
+  ],
+  "include": [
+    "actions",
+    "config",
+    "servers"
+  ],
+  "exclude": [
+    "./node_modules"
+  ]
+}
