@@ -37,7 +37,6 @@ export default class WebServer extends Server {
         debug.disable();
 
         if (Boot.getEnvVar('BITBEAT_DEBUG', true)) {
-            console.log(boot.name)
             debug.enable(`${boot.name}:*`);
         }
     }
