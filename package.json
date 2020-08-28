@@ -18,7 +18,8 @@
     "watch": "npx gulp watch",
     "analyse:dependencies": "npx bundle-phobia -p package.json",
     "analyse:licenses": "yarn licenses list",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "prepare": "npm run build"
   },
   "dependencies": {
     "@bitbeat/core": "0.0.5",
