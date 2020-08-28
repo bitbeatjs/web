@@ -6,7 +6,6 @@ import {
     Result,
     ConnectionMiddleware,
     boot,
-    Boot,
 } from '@bitbeat/core';
 import fastify, { FastifyInstance } from 'fastify';
 import fastifyCORS from 'fastify-cors';
@@ -17,7 +16,7 @@ import fastifyHelmet from 'fastify-helmet';
 import { WebAction, WebServerConfig, WebConnection } from '../';
 import * as Throttle from 'promise-parallel-throttle';
 import { merge } from 'lodash';
-import { Debugger, debug } from 'debug';
+import { Debugger } from 'debug';
 
 export default class WebServer extends Server {
     runtime: FastifyInstance | undefined;
@@ -33,12 +32,7 @@ export default class WebServer extends Server {
     }
 
     async configure(): Promise<void> {
-        this.debug = debug(`${boot.name}:${this.name}`);
-        debug.disable();
-
-        if (Boot.getEnvVar('BITBEAT_DEBUG', true)) {
-            debug.enable(`${boot.name}:*`);
-        }
+        this.debug = boot.generateDebugger(this.name);
     }
 
     async start(): Promise<void> {
@@ -358,6 +352,7 @@ export default class WebServer extends Server {
             this.postRouteRegister(this.runtime);
         }
 
+        this.debug(`${this.name} started.`);
         await this.runtime.listen(config?.port || 8080);
         return super.start();
     }
