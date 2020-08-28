@@ -13,7 +13,7 @@
   },
   "homepage": "https://github.com/bitbeatjs/web",
   "scripts": {
-    "start": "node ./node_modules/@bitbeat/core",
+    "start": "node ./node_modules/@bitbeat/core/bin",
     "build": "npx gulp default",
     "watch": "npx gulp watch",
     "analyse:dependencies": "npx bundle-phobia -p package.json",
