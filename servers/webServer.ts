@@ -346,6 +346,8 @@ export default class WebServer extends Server {
                     return payload;
                 },
             });
+            logger.debug(`Added action '${action.name}' as route with methods '${Array.isArray(action.methods) ? action.methods.join(', ') : action.methods}'.`);
+            this.debug(`Added action '${action.name}' as route with methods '${Array.isArray(action.methods) ? action.methods.join(', ') : action.methods}'.`);
         });
 
         if (this.postRouteRegister) {
