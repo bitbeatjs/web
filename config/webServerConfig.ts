@@ -1,6 +1,10 @@
 import { Configuration } from '@bitbeat/core';
 
 export default class WebServerConfig extends Configuration {
+    constructor() {
+        super();
+    }
+
     default = {
         options: {
             disableRequestLogging: true,
@@ -23,8 +27,4 @@ export default class WebServerConfig extends Configuration {
             },
         },
     };
-
-    constructor() {
-        super();
-    }
 }
