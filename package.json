@@ -2,7 +2,7 @@
   "name": "@bitbeat/web",
   "description": "The web server module for bitbeat.",
   "license": "MIT",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "main": "./index.js",
   "author": "Oliver Freudrich <info@oliverfreudrich.com> (https://oliverfreudrich.com)",
   "private": false,
