@@ -23,4 +23,8 @@ export default class WebServerConfig extends Configuration {
             },
         },
     };
+
+    constructor() {
+        super();
+    }
 }

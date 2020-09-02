@@ -1,5 +1,5 @@
 import { getInstancesOfType, getInstance, boot, RunParameters } from '@bitbeat/core';
-import { WebAction, WebServerConfig } from '../';
+import { WebAction, WebServerConfig } from '../index';
 import { merge } from 'lodash';
 import { join } from 'path';
 import { HTTPMethods } from 'fastify';

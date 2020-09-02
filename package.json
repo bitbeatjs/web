@@ -3,7 +3,7 @@
   "description": "The web server module for bitbeat.",
   "license": "MIT",
   "version": "0.0.8",
-  "main": "index.js",
+  "main": "./index.js",
   "author": "Oliver Freudrich <info@oliverfreudrich.com> (https://oliverfreudrich.com)",
   "private": false,
   "typings": "./index.d.ts",

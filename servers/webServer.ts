@@ -13,10 +13,11 @@ import fastifyRateLimit from 'fastify-rate-limit';
 import underPressure from 'under-pressure';
 import fastifySensible from 'fastify-sensible';
 import fastifyHelmet from 'fastify-helmet';
-import { WebAction, WebServerConfig, WebConnection } from '../';
+import { WebAction, WebServerConfig, WebConnection } from '../index';
 import * as Throttle from 'promise-parallel-throttle';
 import { merge } from 'lodash';
 import { Debugger } from 'debug';
+import { join } from 'path';
 
 export default class WebServer extends Server {
     runtime: FastifyInstance | undefined;
@@ -76,11 +77,11 @@ export default class WebServer extends Server {
 
         [...actions].forEach((action) => {
             this.runtime?.route({
-                url: `/${config?.pathForActions}/${
+                url: join(`/${config?.pathForActions}${
                     config?.useVersioning && !config?.useHeaderVersioning
-                        ? `v${action.version}`
+                        ? `/v${action.version}`
                         : ''
-                }/${action.name}`,
+                }/${action.name}`),
                 method: action.methods,
                 version:
                     config?.useVersioning && config?.useHeaderVersioning
