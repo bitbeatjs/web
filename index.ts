@@ -1,6 +1,7 @@
 import WebServer from './servers/webServer';
 import WebServerConfig from './config/webServerConfig';
 import WebAction from './webAction';
+import WebActionMiddleware from './webActionMiddleware';
 import WebConnection from './webConnection';
 import Documentation from './actions/documentation';
 import Status from './actions/status';
@@ -10,6 +11,7 @@ export {
     WebServer,
     WebServerConfig,
     WebAction,
+    WebActionMiddleware,
     WebConnection,
     Documentation,
     Version,
