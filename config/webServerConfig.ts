@@ -5,7 +5,9 @@ export default class WebServerConfig extends Configuration {
         super();
     }
 
-    default = {
+    default: {
+        [name: string]: any;
+    } = {
         options: {
             disableRequestLogging: true,
         },
@@ -15,7 +17,9 @@ export default class WebServerConfig extends Configuration {
         useHeaderVersioning: false,
     };
 
-    production = {
+    production: {
+        [name: string]: any;
+    } = {
         options: {
             fastifyRateLimit: {
                 max: 100,
