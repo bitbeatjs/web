@@ -1,7 +1,10 @@
 {
   "extends": "./node_modules/@bitbeat/core/tsconfig.json",
   "files": [
-    "index.ts"
+    "index.ts",
+    "webConnection.ts",
+    "webAction.ts",
+    "webActionMiddleware.ts"
   ],
   "include": [
     "actions",
