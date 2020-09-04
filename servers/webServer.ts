@@ -22,9 +22,9 @@ import { join } from 'path';
 
 export default class WebServer extends Server {
     runtime: FastifyInstance | undefined;
-    preRegister?: (runtime: FastifyInstance) => void;
-    postRegister?: (runtime: FastifyInstance) => void;
-    postRouteRegister?: (runtime: FastifyInstance) => void;
+    preRegister?: (runtime: FastifyInstance, config: WebServerConfig | undefined) => void;
+    postRegister?: (runtime: FastifyInstance, config: WebServerConfig | undefined) => void;
+    postRouteRegister?: (runtime: FastifyInstance, config: WebServerConfig | undefined) => void;
     debug: Debugger | any;
 
     constructor() {
@@ -38,8 +38,8 @@ export default class WebServer extends Server {
     }
 
     async start(): Promise<void> {
-        const config = getInstance(WebServerConfig)?.value;
-        const options = config?.options || {};
+        const config = getInstance(WebServerConfig);
+        const options = config?.value.options || {};
 
         const actions = getInstancesOfType(WebAction);
         this.runtime = <any>fastify({
@@ -52,7 +52,7 @@ export default class WebServer extends Server {
         }
 
         if (this.preRegister) {
-            this.preRegister(this.runtime);
+            this.preRegister(this.runtime, config);
         }
 
         this.runtime.register(fastifyCORS, options.fastifyCors);
@@ -73,19 +73,19 @@ export default class WebServer extends Server {
         }
 
         if (this.postRegister) {
-            this.postRegister(this.runtime);
+            this.postRegister(this.runtime, config);
         }
 
         [...actions].forEach((action) => {
             this.runtime?.route({
-                url: join(`/${config?.pathForActions}${
-                    config?.useVersioning && !config?.useHeaderVersioning
+                url: join(`/${config?.value.pathForActions}${
+                    config?.value.useVersioning && !config?.value.useHeaderVersioning
                         ? `/v${action.version}`
                         : ''
                 }/${action.name}`),
                 method: action.methods,
                 version:
-                    config?.useVersioning && config?.useHeaderVersioning
+                    config?.value.useVersioning && config?.value.useHeaderVersioning
                         ? `${action.version}.0.0`
                         : undefined,
                 config: {
@@ -109,7 +109,7 @@ export default class WebServer extends Server {
                                 conn = new WebConnection(
                                     this,
                                     req.raw.connection,
-                                    config?.secure,
+                                    config?.value.secure,
                                     async () => {
                                         await Throttle.all(
                                             [
@@ -361,11 +361,11 @@ export default class WebServer extends Server {
         });
 
         if (this.postRouteRegister) {
-            this.postRouteRegister(this.runtime);
+            this.postRouteRegister(this.runtime, config);
         }
 
         this.debug(`${this.name} started.`);
-        await this.runtime.listen(config?.port || 8080);
+        await this.runtime.listen(config?.value.port || 8080);
         return super.start();
     }
 
