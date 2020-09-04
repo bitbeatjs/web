@@ -22,7 +22,7 @@
     "prepare": "npm run build"
   },
   "dependencies": {
-    "@bitbeat/core": "^0.0.9",
+    "@bitbeat/core": "^0.0.10",
     "debug": "^4.1.1",
     "fastify": "^3.3.0",
     "fastify-cors": "^4.1.0",
