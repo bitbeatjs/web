@@ -13,8 +13,8 @@ export default class WebActionMiddleware extends ActionMiddleware {
         action: WebAction;
         result: any;
         raw: {
-            req: FastifyRequest;
-            res: FastifyReply;
+            request: FastifyRequest;
+            response: FastifyReply;
         };
     }): Promise<void> {}
     /**
@@ -24,8 +24,8 @@ export default class WebActionMiddleware extends ActionMiddleware {
         action: WebAction;
         result: any;
         raw: {
-            req: FastifyRequest;
-            res: FastifyReply;
+            request: FastifyRequest;
+            response: FastifyReply;
         };
     }): Promise<void> {}
 }

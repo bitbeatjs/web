@@ -6,6 +6,7 @@ import {
     Result,
     ConnectionMiddleware,
     boot,
+    store,
 } from '@bitbeat/core';
 import fastify, { FastifyInstance } from 'fastify';
 import fastifyCORS from 'fastify-cors';
@@ -270,8 +271,12 @@ export default class WebServer extends Server {
                         return;
                     }
 
+                    const middlewares = boot.getMiddlewaresOfInstance(
+                        action,
+                        store,
+                    );
                     await Throttle.all(
-                        [...action.middlewares].map((middleware) => async () =>
+                        [...middlewares].map((middleware: any) => async () =>
                             middleware.beforeRun({
                                 action,
                                 result: res.context.config.result,
@@ -301,8 +306,12 @@ export default class WebServer extends Server {
                     return result;
                 },
                 preSerialization: async (req, res, payload: any) => {
+                    const middlewares = boot.getMiddlewaresOfInstance(
+                        action,
+                        store,
+                    );
                     await Throttle.all(
-                        [...action.middlewares].map((middleware) => async () =>
+                        [...middlewares].map((middleware: any) => async () =>
                             middleware.afterRun({
                                 action,
                                 result: payload,
