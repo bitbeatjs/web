@@ -55,20 +55,20 @@ export default class WebServer extends Server {
             this.preRegister(this.runtime, config);
         }
 
-        this.runtime.register(fastifyCORS, options.fastifyCors);
+        this.runtime.register(fastifyCORS, config?.value.fastifyCors);
         this.debug(`Registered fastify cors.`);
-        this.runtime.register(fastifyHelmet, options.fastifyHelmet);
+        this.runtime.register(fastifyHelmet, config?.value.fastifyHelmet);
         this.debug(`Registered fastify helmet.`);
         this.runtime.register(fastifySensible);
         this.debug(`Registered fastify sensible.`);
 
-        if (options.fastifyRateLimit) {
-            this.runtime.register(fastifyRateLimit, options.fastifyRateLimit);
+        if (config?.value.fastifyRateLimit) {
+            this.runtime.register(fastifyRateLimit, config?.value.fastifyRateLimit);
             this.debug(`Registered fastify rate limiter.`);
         }
 
-        if (options.underPressure) {
-            this.runtime.register(underPressure, options.underPressure);
+        if (config?.value.underPressure) {
+            this.runtime.register(underPressure, config?.value.underPressure);
             this.debug(`Registered fastify under pressure.`);
         }
 
@@ -365,7 +365,7 @@ export default class WebServer extends Server {
         }
 
         this.debug(`${this.name} started.`);
-        await this.runtime.listen(config?.value.port || 8080);
+        await this.runtime.listen(config?.value.port as number, config?.value.host as string);
         return super.start();
     }
 
