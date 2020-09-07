@@ -117,7 +117,10 @@ export default class WebServer extends Server {
                                                     conn,
                                                     this
                                                 )
-                                            )
+                                            ),
+                                            {
+                                                maxInProgress: 1,
+                                            }
                                         );
                                         await this.removeConnection(conn);
                                         await Throttle.all(
@@ -128,7 +131,10 @@ export default class WebServer extends Server {
                                                     conn,
                                                     this
                                                 )
-                                            )
+                                            ),
+                                            {
+                                                maxInProgress: 1,
+                                            }
                                         );
                                     }
                                 );
@@ -146,7 +152,10 @@ export default class WebServer extends Server {
                                     ...connectionMiddlewares,
                                 ].map((middleware) => async () =>
                                     await middleware.beforeCreate(conn, this)
-                                )
+                                ),
+                                {
+                                    maxInProgress: 1,
+                                }
                             );
                             this.addConnection(conn);
                             this.debug(`Verified client with id '${conn.id}'.`);
@@ -158,7 +167,10 @@ export default class WebServer extends Server {
                                     ...connectionMiddlewares,
                                 ].map((middleware) => async () =>
                                     await middleware.afterCreate(conn, this)
-                                )
+                                ),
+                                {
+                                    maxInProgress: 1,
+                                }
                             );
                         } catch (e) {
                             res.forbidden(e.toString());
@@ -379,7 +391,10 @@ export default class WebServer extends Server {
                             conn,
                             this
                         )
-                    )
+                    ),
+                    {
+                        maxInProgress: 1,
+                    }
                 );
                 await conn.close();
                 await Throttle.all(
@@ -390,7 +405,10 @@ export default class WebServer extends Server {
                             conn,
                             this
                         )
-                    )
+                    ),
+                    {
+                        maxInProgress: 1,
+                    }
                 );
             }),
         );
