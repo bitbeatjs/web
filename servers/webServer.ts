@@ -173,6 +173,10 @@ export default class WebServer extends Server {
                                 }
                             );
                         } catch (e) {
+                            this.debug(`Rejected client '${conn.id}' with error '${e.toString()}'.`);
+                            logger.debug(
+                                `Rejected client '${conn.id}' with error '${e.toString()}'.`
+                            );
                             res.forbidden(e.toString());
                             return;
                         }
