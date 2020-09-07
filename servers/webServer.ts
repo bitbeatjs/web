@@ -76,6 +76,7 @@ export default class WebServer extends Server {
             this.postRegister(this.runtime, config);
         }
 
+        const connectionMiddlewares: Set<ConnectionMiddleware> = this.getConnectionMiddlewares();
         [...actions].forEach((action) => {
             this.runtime?.route({
                 url: join(`/${config?.value.pathForActions}${
@@ -95,9 +96,6 @@ export default class WebServer extends Server {
                 preValidation: async (req, res) => {
                     try {
                         let conn = this.getConnection(req.ip) as WebConnection;
-                        const connectionMiddlewares: Set<ConnectionMiddleware> = this.getMiddlewaresOfType(
-                            ConnectionMiddleware
-                        ) as Set<ConnectionMiddleware>;
                         try {
                             if (!conn) {
                                 this.debug(
@@ -370,8 +368,31 @@ export default class WebServer extends Server {
     }
 
     async stop(): Promise<void> {
+        const connectionMiddlewares: Set<ConnectionMiddleware> = this.getConnectionMiddlewares();
         await Throttle.all(
-            [...this.connections].map((conn) => async () => await conn.close())
+            [...this.connections].map((conn) => async () => {
+                await Throttle.all(
+                    [
+                        ...connectionMiddlewares,
+                    ].map((middleware) => async () =>
+                        await middleware.beforeDestroy(
+                            conn,
+                            this
+                        )
+                    )
+                );
+                await conn.close();
+                await Throttle.all(
+                    [
+                        ...connectionMiddlewares,
+                    ].map((middleware) => async () =>
+                        await middleware.afterDestroy(
+                            conn,
+                            this
+                        )
+                    )
+                );
+            }),
         );
         await this.runtime?.close();
         this.debug(`${this.name} stopped.`);
