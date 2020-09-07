@@ -1,7 +1,6 @@
 import { Configuration } from '@bitbeat/core';
 
 interface WebConfigProperties {
-    [name: string]: any;
     options?: {
         [name: string]: any;
     };
@@ -10,6 +9,7 @@ interface WebConfigProperties {
     pathForActions?: string;
     useVersioning?: boolean;
     useHeaderVersioning?: boolean;
+    [name: string]: any;
 }
 
 export default class WebServerConfig extends Configuration {
