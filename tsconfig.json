@@ -4,7 +4,8 @@
     "index.ts",
     "webConnection.ts",
     "webAction.ts",
-    "webActionMiddleware.ts"
+    "webActionMiddleware.ts",
+    "webConnectionMiddleware.ts"
   ],
   "include": [
     "actions",

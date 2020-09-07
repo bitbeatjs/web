@@ -4,7 +4,6 @@ import {
     getInstancesOfType,
     Server,
     Result,
-    ConnectionMiddleware,
     boot,
     store,
 } from '@bitbeat/core';
@@ -14,7 +13,7 @@ import fastifyRateLimit from 'fastify-rate-limit';
 import underPressure from 'under-pressure';
 import fastifySensible from 'fastify-sensible';
 import fastifyHelmet from 'fastify-helmet';
-import { WebAction, WebServerConfig, WebConnection } from '../index';
+import { WebAction, WebServerConfig, WebConnection, WebConnectionMiddleware } from '../index';
 import * as Throttle from 'promise-parallel-throttle';
 import { merge } from 'lodash';
 import { Debugger } from 'debug';
@@ -76,7 +75,8 @@ export default class WebServer extends Server {
             this.postRegister(this.runtime, config);
         }
 
-        const connectionMiddlewares: Set<ConnectionMiddleware> = this.getConnectionMiddlewares();
+        const connectionMiddlewares: Set<WebConnectionMiddleware> = new Set([...this.getConnectionMiddlewares()]
+            .filter((instance) => instance instanceof WebConnectionMiddleware));
         [...actions].forEach((action) => {
             this.runtime?.route({
                 url: join(`/${config?.value.pathForActions}${
@@ -380,7 +380,8 @@ export default class WebServer extends Server {
     }
 
     async stop(): Promise<void> {
-        const connectionMiddlewares: Set<ConnectionMiddleware> = this.getConnectionMiddlewares();
+        const connectionMiddlewares: Set<WebConnectionMiddleware> = new Set([...this.getConnectionMiddlewares()]
+            .filter((instance) => instance instanceof WebConnectionMiddleware));
         await Throttle.all(
             [...this.connections].map((conn) => async () => {
                 await Throttle.all(
