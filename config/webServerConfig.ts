@@ -21,7 +21,7 @@ export default class WebServerConfig extends Configuration {
         options: {
             disableRequestLogging: true,
         },
-        host: 'localhost',
+        host: '0.0.0.0',
         port: 8080,
         pathForActions: 'api',
         useVersioning: true,
