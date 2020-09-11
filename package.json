@@ -13,7 +13,7 @@
   },
   "homepage": "https://github.com/bitbeatjs/web",
   "scripts": {
-    "start": "node ./node_modules/@bitbeat/core/bin",
+    "start": "npx @bitbeat/core start",
     "build": "npx gulp default",
     "watch": "npx gulp watch",
     "analyse:dependencies": "npx bundle-phobia -p package.json",
@@ -38,7 +38,7 @@
     "@bitbeat/core": "^0.0.13",
     "@types/debug": "^4.1.5",
     "@types/lodash": "^4.14.161",
-    "@types/node": "^14.6.4",
+    "@types/node": "^14.10.0",
     "@types/node-cron": "^2.0.3",
     "@types/pino": "^6.3.0",
     "@typescript-eslint/eslint-plugin": "^4.1.0",
