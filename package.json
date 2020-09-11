@@ -4,6 +4,7 @@
   "license": "MIT",
   "version": "0.0.14",
   "main": "./index.js",
+  "keywords": ["bitbeat", "framework", "modular", "backend", "minimal", "web", "http", "server", "cors", "api", "rest"],
   "author": "Oliver Freudrich <info@oliverfreudrich.com> (https://oliverfreudrich.com)",
   "private": false,
   "typings": "./index.d.ts",
