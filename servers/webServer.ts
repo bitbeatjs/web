@@ -13,17 +13,28 @@ import fastifyRateLimit from 'fastify-rate-limit';
 import underPressure from 'under-pressure';
 import fastifySensible from 'fastify-sensible';
 import fastifyHelmet from 'fastify-helmet';
-import { WebAction, WebServerConfig, WebConnection, WebConnectionMiddleware } from '../index';
+import WebAction from '../webAction';
+import WebServerConfig from '../config/webServerConfig';
+import WebConnection from '../webConnection';
+import WebConnectionMiddleware from '../webConnectionMiddleware';
 import * as Throttle from 'promise-parallel-throttle';
 import { merge } from 'lodash';
 import { Debugger } from 'debug';
 import { join } from 'path';
-
 export default class WebServer extends Server {
     runtime: FastifyInstance | undefined;
-    preRegister?: (runtime: FastifyInstance, config: WebServerConfig | undefined) => void;
-    postRegister?: (runtime: FastifyInstance, config: WebServerConfig | undefined) => void;
-    postRouteRegister?: (runtime: FastifyInstance, config: WebServerConfig | undefined) => void;
+    preRegister?: (
+        runtime: FastifyInstance,
+        config: WebServerConfig | undefined
+    ) => void;
+    postRegister?: (
+        runtime: FastifyInstance,
+        config: WebServerConfig | undefined
+    ) => void;
+    postRouteRegister?: (
+        runtime: FastifyInstance,
+        config: WebServerConfig | undefined
+    ) => void;
     debug: Debugger | any;
 
     constructor() {
@@ -62,7 +73,10 @@ export default class WebServer extends Server {
         this.debug(`Registered fastify sensible.`);
 
         if (config?.value.fastifyRateLimit) {
-            this.runtime.register(fastifyRateLimit, config?.value.fastifyRateLimit);
+            this.runtime.register(
+                fastifyRateLimit,
+                config?.value.fastifyRateLimit
+            );
             this.debug(`Registered fastify rate limiter.`);
         }
 
@@ -75,18 +89,25 @@ export default class WebServer extends Server {
             this.postRegister(this.runtime, config);
         }
 
-        const connectionMiddlewares: Set<WebConnectionMiddleware> = new Set([...this.getConnectionMiddlewares()]
-            .filter((instance) => instance instanceof WebConnectionMiddleware));
+        const connectionMiddlewares: Set<WebConnectionMiddleware> = new Set(
+            [...this.getConnectionMiddlewares()].filter(
+                (instance) => instance instanceof WebConnectionMiddleware
+            )
+        );
         [...actions].forEach((action) => {
             this.runtime?.route({
-                url: join(`/${config?.value.pathForActions}${
-                    config?.value.useVersioning && !config?.value.useHeaderVersioning
-                        ? `/v${action.version}`
-                        : ''
-                }/${action.name}`),
+                url: join(
+                    `/${config?.value.pathForActions}${
+                        config?.value.useVersioning &&
+                        !config?.value.useHeaderVersioning
+                            ? `/v${action.version}`
+                            : ''
+                    }/${action.name}`
+                ),
                 method: action.methods,
                 version:
-                    config?.value.useVersioning && config?.value.useHeaderVersioning
+                    config?.value.useVersioning &&
+                    config?.value.useHeaderVersioning
                         ? `${action.version}.0.0`
                         : undefined,
                 config: {
@@ -173,9 +194,15 @@ export default class WebServer extends Server {
                                 }
                             );
                         } catch (e) {
-                            this.debug(`Rejected client '${conn.id}' with error '${e.toString()}'.`);
+                            this.debug(
+                                `Rejected client '${
+                                    conn.id
+                                }' with error '${e.toString()}'.`
+                            );
                             logger.debug(
-                                `Rejected client '${conn.id}' with error '${e.toString()}'.`
+                                `Rejected client '${
+                                    conn.id
+                                }' with error '${e.toString()}'.`
                             );
                             res.forbidden(e.toString());
                             return;
@@ -287,7 +314,7 @@ export default class WebServer extends Server {
 
                     const middlewares = boot.getMiddlewaresOfInstance(
                         action,
-                        store,
+                        store
                     );
                     await Throttle.all(
                         [...middlewares].map((middleware: any) => async () =>
@@ -322,7 +349,7 @@ export default class WebServer extends Server {
                 preSerialization: async (req, res, payload: any) => {
                     const middlewares = boot.getMiddlewaresOfInstance(
                         action,
-                        store,
+                        store
                     );
                     await Throttle.all(
                         [...middlewares].map((middleware: any) => async () =>
@@ -370,8 +397,20 @@ export default class WebServer extends Server {
                     return payload;
                 },
             });
-            logger.debug(`Added action '${action.name}' as route with methods '${Array.isArray(action.methods) ? action.methods.join(', ') : action.methods}'.`);
-            this.debug(`Added action '${action.name}' as route with methods '${Array.isArray(action.methods) ? action.methods.join(', ') : action.methods}'.`);
+            logger.debug(
+                `Added action '${action.name}' as route with methods '${
+                    Array.isArray(action.methods)
+                        ? action.methods.join(', ')
+                        : action.methods
+                }'.`
+            );
+            this.debug(
+                `Added action '${action.name}' as route with methods '${
+                    Array.isArray(action.methods)
+                        ? action.methods.join(', ')
+                        : action.methods
+                }'.`
+            );
         });
 
         if (this.postRouteRegister) {
@@ -379,23 +418,24 @@ export default class WebServer extends Server {
         }
 
         this.debug(`${this.name} started.`);
-        await this.runtime.listen(config?.value.port as number, config?.value.host as string);
+        await this.runtime.listen(
+            config?.value.port as number,
+            config?.value.host as string
+        );
         return super.start();
     }
 
     async stop(): Promise<void> {
-        const connectionMiddlewares: Set<WebConnectionMiddleware> = new Set([...this.getConnectionMiddlewares()]
-            .filter((instance) => instance instanceof WebConnectionMiddleware));
+        const connectionMiddlewares: Set<WebConnectionMiddleware> = new Set(
+            [...this.getConnectionMiddlewares()].filter(
+                (instance) => instance instanceof WebConnectionMiddleware
+            )
+        );
         await Throttle.all(
             [...this.connections].map((conn) => async () => {
                 await Throttle.all(
-                    [
-                        ...connectionMiddlewares,
-                    ].map((middleware) => async () =>
-                        await middleware.beforeDestroy(
-                            conn,
-                            this
-                        )
+                    [...connectionMiddlewares].map((middleware) => async () =>
+                        await middleware.beforeDestroy(conn, this)
                     ),
                     {
                         maxInProgress: 1,
@@ -403,19 +443,14 @@ export default class WebServer extends Server {
                 );
                 await conn.close();
                 await Throttle.all(
-                    [
-                        ...connectionMiddlewares,
-                    ].map((middleware) => async () =>
-                        await middleware.afterDestroy(
-                            conn,
-                            this
-                        )
+                    [...connectionMiddlewares].map((middleware) => async () =>
+                        await middleware.afterDestroy(conn, this)
                     ),
                     {
                         maxInProgress: 1,
                     }
                 );
-            }),
+            })
         );
         await this.runtime?.close();
         this.debug(`${this.name} stopped.`);

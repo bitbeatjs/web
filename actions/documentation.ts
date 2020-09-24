@@ -1,5 +1,11 @@
-import { getInstancesOfType, getInstance, boot, RunParameters } from '@bitbeat/core';
-import { WebAction, WebServerConfig } from '../index';
+import {
+    getInstancesOfType,
+    getInstance,
+    boot,
+    RunParameters,
+} from '@bitbeat/core';
+import WebAction from '../webAction';
+import WebServerConfig from '../config/webServerConfig';
 import { merge } from 'lodash';
 import { join } from 'path';
 import { HTTPMethods } from 'fastify';
@@ -65,8 +71,7 @@ export default class Documentation extends WebAction {
                 required: true,
                 example: 'openapi',
                 description: {
-                    en:
-                        'Set the of the output of the documentation.',
+                    en: 'Set the of the output of the documentation.',
                 },
             },
         };

@@ -1,6 +1,6 @@
 import { Action, Result } from '@bitbeat/core';
 import { FastifyReply, FastifyRequest, HTTPMethods } from 'fastify';
-import { WebActionMiddleware } from './index';
+import WebActionMiddleware from './webActionMiddleware';
 
 export default class WebAction extends Action {
     methods: HTTPMethods[] | HTTPMethods = ['GET', 'POST'];

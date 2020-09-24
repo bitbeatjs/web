@@ -1,5 +1,5 @@
 import { boot, RunParameters } from '@bitbeat/core';
-import { WebAction } from '../index';
+import WebAction from '../webAction';
 import { merge } from 'lodash';
 
 export default class Version extends WebAction {
@@ -18,8 +18,7 @@ export default class Version extends WebAction {
                 required: true,
                 example: '0.0.1',
                 description: {
-                    en:
-                        'This will output the version you are using.',
+                    en: 'This will output the version you are using.',
                 },
             },
         });

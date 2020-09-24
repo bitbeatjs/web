@@ -1,4 +1,4 @@
-import { WebAction } from '../index';
+import WebAction from '../webAction';
 import { RunParameters } from '@bitbeat/core';
 
 export default class Status extends WebAction {
