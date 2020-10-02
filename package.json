@@ -2,7 +2,7 @@
     "name": "@bitbeat/web",
     "description": "The web server module for bitbeat.",
     "license": "MIT",
-    "version": "0.0.17",
+    "version": "0.0.18",
     "main": "./index.js",
     "keywords": [
         "bitbeat",
