@@ -6,6 +6,7 @@ import {
     Result,
     boot,
     store,
+    generateDebugger,
 } from '@bitbeat/core';
 import fastify, { FastifyInstance } from 'fastify';
 import fastifyCORS from 'fastify-cors';
@@ -44,7 +45,7 @@ export default class WebServer extends Server {
     }
 
     async configure(): Promise<void> {
-        this.debug = boot.generateDebugger(this.name);
+        this.debug = generateDebugger(this.name);
     }
 
     async start(): Promise<void> {
