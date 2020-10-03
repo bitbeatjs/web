@@ -24,18 +24,24 @@ import { Debugger } from 'debug';
 import { join } from 'path';
 export default class WebServer extends Server {
     runtime: FastifyInstance | undefined;
-    preRegister?: (
-        runtime: FastifyInstance,
-        config: WebServerConfig | undefined
-    ) => void;
-    postRegister?: (
-        runtime: FastifyInstance,
-        config: WebServerConfig | undefined
-    ) => void;
-    postRouteRegister?: (
-        runtime: FastifyInstance,
-        config: WebServerConfig | undefined
-    ) => void;
+    preRegister?: Set<
+        (
+            runtime: FastifyInstance | undefined,
+            config: WebServerConfig | undefined
+        ) => void
+    > = new Set();
+    postRegister?: Set<
+        (
+            runtime: FastifyInstance | undefined,
+            config: WebServerConfig | undefined
+        ) => void
+    > = new Set();
+    postRouteRegister?: Set<
+        (
+            runtime: FastifyInstance | undefined,
+            config: WebServerConfig | undefined
+        ) => void
+    > = new Set();
     debug: Debugger | any;
 
     constructor() {
@@ -62,8 +68,10 @@ export default class WebServer extends Server {
             throw new Error('Could not create runtime.');
         }
 
-        if (this.preRegister) {
-            this.preRegister(this.runtime, config);
+        if (this.preRegister?.size) {
+            this.preRegister.forEach((register) =>
+                register(this.runtime, config)
+            );
         }
 
         this.runtime.register(fastifyCORS, config?.value.fastifyCors);
@@ -86,8 +94,10 @@ export default class WebServer extends Server {
             this.debug(`Registered fastify under pressure.`);
         }
 
-        if (this.postRegister) {
-            this.postRegister(this.runtime, config);
+        if (this.postRegister?.size) {
+            this.postRegister.forEach((register) =>
+                register(this.runtime, config)
+            );
         }
 
         const connectionMiddlewares: Set<WebConnectionMiddleware> = new Set(
@@ -414,8 +424,10 @@ export default class WebServer extends Server {
             );
         });
 
-        if (this.postRouteRegister) {
-            this.postRouteRegister(this.runtime, config);
+        if (this.postRouteRegister?.size) {
+            this.postRouteRegister.forEach((register) =>
+                register(this.runtime, config)
+            );
         }
 
         this.debug(`${this.name} started.`);
