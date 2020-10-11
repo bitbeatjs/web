@@ -5,7 +5,13 @@ import WebActionMiddleware from './webActionMiddleware';
 export default class WebAction extends Action {
     methods: HTTPMethods[] | HTTPMethods = ['GET', 'POST'];
     contentType = 'application/json';
-    strict = false;
+    strict: {
+        acceptType: boolean;
+        output: boolean;
+    } = {
+        acceptType: false,
+        output: false,
+    };
     middlewares: Set<WebActionMiddleware> = new Set();
 
     constructor() {

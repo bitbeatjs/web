@@ -327,7 +327,8 @@ export default class WebServer extends Server {
                         acceptType &&
                         acceptType !== '*/*' &&
                         !~acceptType.indexOf(action.contentType) &&
-                        action.strict
+                        action.strict &&
+                        !!action.strict.acceptType
                     ) {
                         res.badRequest(
                             "The accept type you have set doesn't match the return type of this action."
@@ -390,7 +391,7 @@ export default class WebServer extends Server {
                         }
                     );
 
-                    if (action.strict && action.output) {
+                    if (action.strict.output && action.output) {
                         const obj: any = {};
                         Object.keys(action.output).forEach((param) => {
                             if (

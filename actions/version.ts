@@ -10,7 +10,7 @@ export default class Version extends WebAction {
             en: 'This action will return the current version.',
         };
         this.tags = new Set(['version']);
-        this.strict = true;
+        this.strict.output = true;
         this.methods = ['GET'];
         this.inputs = {};
         merge(this.output, {

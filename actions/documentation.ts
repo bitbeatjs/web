@@ -44,7 +44,7 @@ export default class Documentation extends WebAction {
         };
         this.tags = new Set(['documentation']);
         this.additionalMapping = {};
-        this.strict = true;
+        this.strict.output = true;
         this.inputs = {
             language: {
                 type: String,
@@ -64,15 +64,6 @@ export default class Documentation extends WebAction {
                 description: {
                     en:
                         'Set the fallback language you want to get back the documentation if language is not found.',
-                },
-            },
-            format: {
-                type: String,
-                default: '',
-                required: true,
-                example: 'openapi',
-                description: {
-                    en: 'Set the of the output of the documentation.',
                 },
             },
         };
@@ -146,7 +137,7 @@ export default class Documentation extends WebAction {
                 },
             };
             Object.keys(action.output).forEach((output) => {
-                actionDescription[action.version].output[output] = {
+                actionDescription[(action as any).version].output[output] = {
                     ...action.output[output],
                     type: action.output[output].type.name as any,
                     description:
@@ -176,15 +167,16 @@ export default class Documentation extends WebAction {
                                   fallbackLanguage
                               ] as string),
                 };
-                delete param.format;
                 delete param.validate;
-                obj[action.name][action.version].params[input] = param as any;
+                obj[action.name][(action as any).version].params[
+                    input
+                ] = param as any;
             });
 
             merge(
-                obj[action.name][action.version],
+                obj[action.name][(action as any).version],
                 ((this.additionalMapping || {})[action.name] || {})[
-                    action.version
+                    (action as any).version
                 ]
             );
         });
