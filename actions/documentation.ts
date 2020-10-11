@@ -42,6 +42,7 @@ export default class Documentation extends WebAction {
         this.description = {
             en: 'This action will return all web actions as documentation.',
         };
+        this.tags = new Set(['documentation']);
         this.additionalMapping = {};
         this.strict = true;
         this.inputs = {

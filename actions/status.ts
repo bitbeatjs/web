@@ -8,6 +8,7 @@ export default class Status extends WebAction {
         this.description = {
             en: 'This action will return the code of status.',
         };
+        this.tags = new Set(['status']);
         this.strict = true;
         this.methods = ['GET'];
         this.inputs = {};
