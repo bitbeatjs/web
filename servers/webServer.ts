@@ -131,7 +131,7 @@ export default class WebServer extends Server {
                 version:
                     config?.value.useVersioning &&
                     config?.value.useHeaderVersioning
-                        ? `${action.version}.0.0`
+                        ? (action.version as string)
                         : undefined,
                 config: {
                     params: {} as any,
