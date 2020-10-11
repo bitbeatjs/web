@@ -42,6 +42,18 @@ export default class WebServer extends Server {
             config: WebServerConfig | undefined
         ) => void
     > = new Set();
+    postServerStart?: Set<
+        (
+            runtime: FastifyInstance | undefined,
+            config: WebServerConfig | undefined
+        ) => void
+    > = new Set();
+    postServerStop?: Set<
+        (
+            runtime: FastifyInstance | undefined,
+            config: WebServerConfig | undefined
+        ) => void
+    > = new Set();
     debug: Debugger | any;
 
     constructor() {
@@ -430,15 +442,22 @@ export default class WebServer extends Server {
             );
         }
 
-        this.debug(`${this.name} started.`);
         await this.runtime.listen(
             config?.value.port as number,
             config?.value.host as string
         );
+        this.debug(`${this.name} started.`);
+        logger.info(`${this.name} started.`);
+
+        if (this.postServerStart?.size) {
+            this.postServerStart.forEach((fn) => fn(this.runtime, config));
+        }
+
         return super.start();
     }
 
     async stop(): Promise<void> {
+        const config = getInstance(WebServerConfig);
         const connectionMiddlewares: Set<WebConnectionMiddleware> = new Set(
             [...this.getConnectionMiddlewares()].filter(
                 (instance) => instance instanceof WebConnectionMiddleware
@@ -468,6 +487,11 @@ export default class WebServer extends Server {
         await this.runtime?.close();
         this.debug(`${this.name} stopped.`);
         logger.info(`${this.name} stopped.`);
+
+        if (this.postServerStop?.size) {
+            this.postServerStop.forEach((fn) => fn(this.runtime, config));
+        }
+
         return super.stop();
     }
 }
