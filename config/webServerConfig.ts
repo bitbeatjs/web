@@ -26,6 +26,7 @@ export default class WebServerConfig extends Configuration {
         pathForActions: 'api',
         useVersioning: true,
         useHeaderVersioning: false,
+        enableMiddlewares: true,
     };
 
     production: WebConfigProperties = {

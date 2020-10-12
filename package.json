@@ -41,6 +41,7 @@
         "fastify-rate-limit": "^4.0.2",
         "fastify-sensible": "^3.0.1",
         "lodash": "^4.17.20",
+        "middie": "^5.1.0",
         "promise-parallel-throttle": "^3.3.0",
         "under-pressure": "^5.2.0"
     },

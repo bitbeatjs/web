@@ -8,51 +8,53 @@ import {
     store,
     generateDebugger,
 } from '@bitbeat/core';
-import fastify, { FastifyInstance } from 'fastify';
-import fastifyCORS from 'fastify-cors';
-import fastifyRateLimit from 'fastify-rate-limit';
-import underPressure from 'under-pressure';
-import fastifySensible from 'fastify-sensible';
-import fastifyHelmet from 'fastify-helmet';
+import * as Throttle from 'promise-parallel-throttle';
 import WebAction from '../webAction';
-import WebServerConfig from '../config/webServerConfig';
 import WebConnection from '../webConnection';
 import WebConnectionMiddleware from '../webConnectionMiddleware';
-import * as Throttle from 'promise-parallel-throttle';
-import { merge } from 'lodash';
+import WebServerConfig from '../config/webServerConfig';
+import fastify, { FastifyInstance, RouteShorthandOptions } from 'fastify';
+import fastifyCORS from 'fastify-cors';
+import fastifyHelmet from 'fastify-helmet';
+import fastifyRateLimit from 'fastify-rate-limit';
+import fastifySensible from 'fastify-sensible';
+import middie from 'middie';
+import underPressure from 'under-pressure';
 import { Debugger } from 'debug';
 import { join } from 'path';
+import { merge } from 'lodash';
+
 export default class WebServer extends Server {
     runtime: FastifyInstance | undefined;
     preRegister?: Set<
         (
             runtime: FastifyInstance | undefined,
             config: WebServerConfig | undefined
-        ) => void
+        ) => Promise<void>
     > = new Set();
     postRegister?: Set<
         (
             runtime: FastifyInstance | undefined,
             config: WebServerConfig | undefined
-        ) => void
+        ) => Promise<void>
     > = new Set();
     postRouteRegister?: Set<
         (
             runtime: FastifyInstance | undefined,
             config: WebServerConfig | undefined
-        ) => void
+        ) => Promise<void>
     > = new Set();
     postServerStart?: Set<
         (
             runtime: FastifyInstance | undefined,
             config: WebServerConfig | undefined
-        ) => void
+        ) => Promise<void>
     > = new Set();
     postServerStop?: Set<
         (
             runtime: FastifyInstance | undefined,
             config: WebServerConfig | undefined
-        ) => void
+        ) => Promise<void>
     > = new Set();
     debug: Debugger | any;
 
@@ -81,11 +83,17 @@ export default class WebServer extends Server {
         }
 
         if (this.preRegister?.size) {
-            this.preRegister.forEach((register) =>
-                register(this.runtime, config)
+            await Throttle.all(
+                [...this.preRegister].map((register) => async () =>
+                    register(this.runtime, config)
+                ),
+                {
+                    maxInProgress: 1,
+                }
             );
         }
 
+        // enable default stuff like cors and security headers
         this.runtime.register(fastifyCORS, config?.value.fastifyCors);
         this.debug(`Registered fastify cors.`);
         this.runtime.register(fastifyHelmet, config?.value.fastifyHelmet);
@@ -93,6 +101,7 @@ export default class WebServer extends Server {
         this.runtime.register(fastifySensible);
         this.debug(`Registered fastify sensible.`);
 
+        // optionally enable rate limiter
         if (config?.value.fastifyRateLimit) {
             this.runtime.register(
                 fastifyRateLimit,
@@ -101,14 +110,26 @@ export default class WebServer extends Server {
             this.debug(`Registered fastify rate limiter.`);
         }
 
+        // optionally enable under pressure
         if (config?.value.underPressure) {
             this.runtime.register(underPressure, config?.value.underPressure);
             this.debug(`Registered fastify under pressure.`);
         }
 
+        // enable all kind of middlewares
+        if (config?.value.enableMiddlewares) {
+            await this.runtime.register(middie);
+            this.debug(`Registered fastify middie.`);
+        }
+
         if (this.postRegister?.size) {
-            this.postRegister.forEach((register) =>
-                register(this.runtime, config)
+            await Throttle.all(
+                [...this.postRegister].map((register) => async () =>
+                    register(this.runtime, config)
+                ),
+                {
+                    maxInProgress: 1,
+                }
             );
         }
 
@@ -438,8 +459,13 @@ export default class WebServer extends Server {
         });
 
         if (this.postRouteRegister?.size) {
-            this.postRouteRegister.forEach((register) =>
-                register(this.runtime, config)
+            await Throttle.all(
+                [...this.postRouteRegister].map((register) => async () =>
+                    register(this.runtime, config)
+                ),
+                {
+                    maxInProgress: 1,
+                }
             );
         }
 
@@ -451,7 +477,14 @@ export default class WebServer extends Server {
         logger.info(`${this.name} started.`);
 
         if (this.postServerStart?.size) {
-            this.postServerStart.forEach((fn) => fn(this.runtime, config));
+            await Throttle.all(
+                [...this.postServerStart].map((fn) => async () =>
+                    fn(this.runtime, config)
+                ),
+                {
+                    maxInProgress: 1,
+                }
+            );
         }
 
         return super.start();
@@ -490,7 +523,14 @@ export default class WebServer extends Server {
         logger.info(`${this.name} stopped.`);
 
         if (this.postServerStop?.size) {
-            this.postServerStop.forEach((fn) => fn(this.runtime, config));
+            await Throttle.all(
+                [...this.postServerStop].map((fn) => async () =>
+                    fn(this.runtime, config)
+                ),
+                {
+                    maxInProgress: 1,
+                }
+            );
         }
 
         return super.stop();
