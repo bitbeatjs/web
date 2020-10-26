@@ -59,8 +59,8 @@ You can edit those properties by either extending the `WebConfig` class in your 
 
 ### Example 1:
 
--- config
-|-- myOwnConfig.ts
+-- config<br>
+&nbsp;|-- myOwnConfig.ts
 
 ```typescript
 import { WebConfig } from '@bitbeat/web';
