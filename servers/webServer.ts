@@ -141,12 +141,15 @@ export default class WebServer extends Server {
         [...actions].forEach((action) => {
             this.runtime?.route({
                 url: join(
-                    `/${config?.value.pathForActions}${
+                    '/',
+                    config?.value.pathForActions || '',
+                    `${
                         config?.value.useVersioning &&
                         !config?.value.useHeaderVersioning
                             ? `/v${action.version}`
                             : ''
-                    }/${action.name}`
+                    }`,
+                    action.name
                 ),
                 method: action.methods,
                 version:
