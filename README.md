@@ -96,18 +96,6 @@ export default async () => {
 };
 ```
 
-## Custom integrations
-
-To add your own custom logic to the existing server use one of the following methods:
-
--   `preRegister`
--   `postRegister`
--   `postRouteRegister`
--   `postServerStart`
--   `postServerStop`
-
-These are a sets of functions, which will run one by one and support `async`. There is always the "current" `WebServer`-runtime and `WebConfig` provided in those functions.
-
 ## Add actions
 
 To add your own web action to the web server, just extend the `WebAction`-class in the `actions` folder and the web server will automatically load them. Examples can be found in the default web actions.
@@ -136,6 +124,18 @@ You have the option to enable strict mode for the output and the accept type.
 
 If you enable this, the server will reject the request if the response type is not equal the accept type.
 
-## Output
+### Output
 
 If you enable output, the server will strip any params which are not defined in the output schema.
+
+## Custom integrations
+
+To add your own custom logic to the existing server use one of the following methods:
+
+-   `preRegister`
+-   `postRegister`
+-   `postRouteRegister`
+-   `postServerStart`
+-   `postServerStop`
+
+These are a sets of functions, which will run one by one and support `async`. There is always the "current" `WebServer`-runtime and `WebConfig` provided in those functions.
