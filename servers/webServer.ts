@@ -446,18 +446,22 @@ export default class WebServer extends Server {
                 },
             });
             logger.debug(
-                `Added action '${action.name}' as route with methods '${
+                `Added action '${action.name}' as route with methods ${
                     Array.isArray(action.methods)
-                        ? action.methods.join(', ')
-                        : action.methods
-                }'.`
+                        ? action.methods
+                              .map((item: string) => `'${item}'`)
+                              .join(', ')
+                        : `${action.methods}`
+                }.`
             );
             this.debug(
-                `Added action '${action.name}' as route with methods '${
+                `Added action '${action.name}' as route with methods ${
                     Array.isArray(action.methods)
-                        ? action.methods.join(', ')
-                        : action.methods
-                }'.`
+                        ? action.methods
+                              .map((item: string) => `'${item}'`)
+                              .join(', ')
+                        : `${action.methods}`
+                }.`
             );
         });
 
